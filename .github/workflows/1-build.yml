@@ -1,0 +1,35 @@
+name: "1 - Build Angular Project"
+
+on:
+  push:
+    branches: [ "main", "feature**" ]
+  pull_request:
+    branches: [ "main", "feature**" ]
+
+jobs:
+  build:
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
+    runs-on: ubuntu-latest
+    name: build
+
+    steps:
+    - name: checking out code
+      uses: actions/checkout@v4
+
+    - name: List contents of working directory
+      run: ls -la
+
+    - name: set up node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+        cache: 'npm'
+        cache-dependency-path: 'package-lock.json'
+
+    # Install the dependencies need to build the app
+    - name: install dependencies
+      run: npm ci # Use npm ci for better performance in CI
+
+    # Runs a set of commands to build
+    - name: build
+      run: npm run build
